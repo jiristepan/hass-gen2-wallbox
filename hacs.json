@@ -1,5 +1,5 @@
 {
-  "name": "FVE Control",
+  "name": "GEN2 Wallbox",
   "render_readme": true,
   "iot_class": "local_polling"
 }
