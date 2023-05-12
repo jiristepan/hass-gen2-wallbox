@@ -1,0 +1,14 @@
+{
+  "domain": "gen2_wallbox",
+  "name": "GEN2 Wallbox",
+  "codeowners": ["@jiristepan"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/jiristepan/hass-gen2-wallbox",
+  "homekit": {},
+  "iot_class": "local_polling",
+  "requirements": ["tinytuya==1.12.6"],
+  "ssdp": [],
+  "zeroconf": [],
+  "version": "0.3.0"
+}
