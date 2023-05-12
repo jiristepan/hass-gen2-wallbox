@@ -52,4 +52,4 @@ The integration has:
 - **1 confing number**: maximum charging current from 8 to 16 A
 - **1 switch** that starts/stops the charging process. It takes approximately 5-10 s to start. So be patient before the integration responds.
 
-Translated with www.DeepL.com/Translator (free version)
+
