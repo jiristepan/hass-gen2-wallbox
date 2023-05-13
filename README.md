@@ -53,3 +53,15 @@ The integration has:
 - **1 switch** that starts/stops the charging process. It takes approximately 5-10 s to start. So be patient before the integration responds.
 
 
+# Releases
+
+## 0.3.1
+- improved response and avalability of sensors
+- added device compsumption sensot
+- added real power estimation based on number of car onboard charger phases
+- added posibiilty to config in configuration.yaml - to be specified
+
+## 0.3.0
+Initial release
+
+
