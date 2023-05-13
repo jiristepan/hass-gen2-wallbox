@@ -7,6 +7,7 @@ from homeassistant.components.number import NumberEntity
 from homeassistant.const import ELECTRIC_CURRENT_AMPERE, EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.config_entries import ConfigEntry
 
 from .const import DOMAIN
 
@@ -16,8 +17,8 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities
 ):
-    """Set up the Ally binary_sensor platform."""
-    _LOGGER.info("Setting up GEN2 Wallbox numbers")
+    """Set up the GEN2 number platform."""
+
     gen2 = hass.data[DOMAIN][entry.entry_id]
 
     entities = [WallBoxChargingCurrent(gen2)]
@@ -47,18 +48,25 @@ class WallBoxChargingCurrent(NumberEntity):
         return self.device.device_info
 
     @property
+    def available(self) -> bool | None:
+        return self.device.is_available()
+
+    @property
     def native_value(self) -> int | None:
         """Return the state of the number entity."""
+        _LOGGER.debug("reading native value of Set32A")
         data = self.device.get_value("Set32A")
         if data == None:
             self._attr_available = False
+            _LOGGER.debug("Set32A not available")
             return None
         else:
             self._attr_available = True
+            _LOGGER.debug(f"Set32A = {data}")
             return int(data)
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the value of the entity."""
-        _LOGGER.info(f"Seting Set32A: {value}")
-        out = self.device.set_value("Set32A", int(value))
+        _LOGGER.debug(f"Seting Set32A: {value}")
+        self.device.set_value("Set32A", int(value))
         self.device.update()

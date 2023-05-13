@@ -14,17 +14,60 @@ from homeassistant.helpers.event import async_track_time_interval
 from .const import DOMAIN
 from .gen2wallbox import GEN2_Wallbox
 
+import voluptuous as vol
+from homeassistant.helpers import config_validation as cv
+
+
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.NUMBER, Platform.SWITCH]
+config = {}
 
+CONFIG_SCHEMA = vol.Schema(
+    {
+        DOMAIN: vol.Schema(
+            {
+                vol.Optional(
+                    "fve_grid_power_sensor"
+                ): cv.entity_id,
+                        vol.Optional(
+                    "fve_pv_power_sensor"
+                ): cv.entity_id,
+                        vol.Optional(
+                    "fve_battery_power_sensor"
+                ): cv.entity_id,
+                        vol.Optional(
+                    "fve_battery_soc_sensor"
+                ): cv.entity_id
+            }
+        ),
+    },
+    extra=vol.ALLOW_EXTRA,
+)
+
+async def async_setup(hass, config) -> bool:
+    """Set up the Circadian Lighting platform."""
+    if DOMAIN in config:
+        conf = config[DOMAIN]
+    else:
+        conf = {}
+
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN]["CONFIG"] = conf
+
+    return True
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up GEN2 Wallbox from a config entry."""
 
-    hass.data.setdefault(DOMAIN, {})
+    _LOGGER.debug("Setting up Wallbox entry")
+    _LOGGER.debug(hass.data[DOMAIN])
     wallbox = GEN2_Wallbox(
         entry.data["deviceid"], entry.data["ip"], entry.data["localkey"]
     )
+    if (entry.data["car_phases"]):
+        wallbox.car_phases = int(entry.data["car_phases"])
+
+    wallbox.config = hass.data[DOMAIN]["CONFIG"]
 
     # register device info for all entities
     wallbox.device_info = DeviceInfo(
@@ -37,6 +80,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # periodical update of the state
     async_track_time_interval(hass, wallbox.update, timedelta(seconds=10))
+    async_track_time_interval(hass, wallbox.decide, timedelta(seconds=20))
 
     hass.data[DOMAIN][entry.entry_id] = wallbox
 
@@ -51,3 +95,26 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
+
+async def async_migrate_entry(hass, config_entry: ConfigEntry):
+    """Migrate old entry."""
+    _LOGGER.debug("Migrating from version %s", config_entry.version)
+
+    if config_entry.version == 1:
+
+        new = {**config_entry.data}
+        # TODO: modify Config Entry data
+
+        config_entry.version = 2
+        hass.config_entries.async_update_entry(config_entry, data=new)
+
+    _LOGGER.debug("Migration to version %s successful", config_entry.version)
+
+    return True
+
+
+class GEN2_wallbox_platform:
+    """wraper for global configuration"""
+    def __init__(self, hass, config):
+        self.hass = hass
+        self.config = config

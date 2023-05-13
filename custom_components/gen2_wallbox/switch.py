@@ -8,6 +8,8 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 
+from .gen2wallbox import GEN2_Wallbox
+
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -16,8 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities
 ):
-    """Set up the Ally binary_sensor platform."""
-    _LOGGER.info("Setting up GEN2 Wallbox numbers")
+    """Set up the GEN2 switch platform."""
     gen2 = hass.data[DOMAIN][entry.entry_id]
 
     entities = [WallBoxChargingSwitch(gen2)]
@@ -33,7 +34,7 @@ class WallBoxChargingSwitch(SwitchEntity):
     _attr_unique_id = "wallbox_charging_switch"
     _attr_device_class = SwitchDeviceClass.OUTLET
 
-    def __init__(self, device) -> None:
+    def __init__(self, device: GEN2_Wallbox) -> None:
         super().__init__()
         self.device = device
 
@@ -41,6 +42,10 @@ class WallBoxChargingSwitch(SwitchEntity):
     def device_info(self) -> DeviceInfo:
         """Return the device info."""
         return self.device.device_info
+
+    @property
+    def available(self) -> bool | None:
+        return self.device.is_available()
 
     @property
     def is_on(self) -> bool | None:
@@ -56,12 +61,12 @@ class WallBoxChargingSwitch(SwitchEntity):
 
         return False
 
-    async def async_turn_on(self, **kwargs):
+    def turn_on(self, **kwargs):
         """Turn the entity on."""
         self.device.start_charging()
-        await self.device.async_update()
+        self.device.update()
 
-    async def async_turn_off(self, **kwargs):
+    def turn_off(self, **kwargs):
         """Turn the entity on."""
         self.device.stop_charging()
-        await self.device.async_update()
+        self.device.update()

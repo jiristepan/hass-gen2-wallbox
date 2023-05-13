@@ -35,17 +35,28 @@ class GEN2_Wallbox:
         self.deviceid = deviceid
         self.ip = ip
         self.localkey = localkey
+        self.car_phases = 3
+        self.config = {}
+
+        self.available = False
 
         self.device = tinytuya.OutletDevice(deviceid, ip, localkey)
         self.device.set_version(3.3)
-        self.device.set_socketTimeout(5)
-        self.device.set_socketRetryLimit(3)
+        self.device.set_socketTimeout(3)
+        self.device.set_socketRetryLimit(2)
 
         self.update()
 
-    def update(self, hass=None):
+    def is_available(self) -> bool:
+        return self.available
+
+    def decide(self, ts=None):
+        _LOGGER.debug(f"Making decision based on {self.config}")
+        return True
+
+    def update(self, ts=None):
         """update status of the device"""
-        _LOGGER.info("Sync update start")
+        _LOGGER.debug("Sync update start")
 
         data = self.device.status()
 
@@ -55,6 +66,9 @@ class GEN2_Wallbox:
         else:
             self.status = {"connected": True, "message": ""}
             self.available = True
+
+        _LOGGER.debug(self.available)
+        _LOGGER.debug(data)
 
         if not self.available:
             return "failed"
@@ -63,45 +77,6 @@ class GEN2_Wallbox:
         self._dps_data_timestamp = time.time()
 
         return "updated"
-
-    async def async_update(self):
-        """update status of the device"""
-        _LOGGER.info("Async update start")
-
-        # if time.time() - self._dps_data_timestamp < self.UPDATE_INTERVAL:
-        #     out = {
-        #         "mode": "cached",
-        #         "last_update": self._dps_data_timestamp,
-        #         "data": self._dps_data,
-        #     }
-        #     _LOGGER.info(out)
-        #     return out
-
-        data = self.device.status()
-        if "Error" in data:
-            self.status = {"connected": False, "message": data["Error"]}
-            self.available = False
-        else:
-            self.status = {"connected": True, "message": ""}
-            self.available = True
-
-        if (
-            not self.available
-            and time.time() - self._dps_data_timestamp > 3 * self.UPDATE_INTERVAL
-        ):
-            _LOGGER.info("Device not available")
-            return None
-
-        self._dps_data = data
-        self._dps_data_timestamp = time.time()
-
-        out = {
-            "mode": "updated",
-            "last_update": self._dps_data_timestamp,
-            "data": self._dps_data,
-        }
-        _LOGGER.info(out)
-        return out
 
     def get_data(self):
         if self.available:

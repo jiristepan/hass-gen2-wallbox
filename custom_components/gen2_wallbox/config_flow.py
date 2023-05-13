@@ -14,13 +14,20 @@ from homeassistant.exceptions import HomeAssistantError
 from .const import DOMAIN
 from .gen2wallbox import GEN2_Wallbox
 
+from homeassistant.helpers import config_validation as cv
+
+
 _LOGGER = logging.getLogger(__name__)
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
-        vol.Required("deviceid"): str,
-        vol.Required("ip"): str,
-        vol.Required("localkey"): str,
+        vol.Required("ip"): cv.string,
+        vol.Required("deviceid"): cv.string,
+        vol.Required("localkey"): cv.string,
+        vol.Optional(
+            "car_phases",
+            default=3
+        ): vol.All(vol.Coerce(int), vol.Range(min=1, max=3))
     }
 )
 
@@ -32,8 +39,12 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     """
 
     wallbox = GEN2_Wallbox(data["deviceid"], data["ip"], data["localkey"])
+
+    if (data["car_phases"]):
+        wallbox.car_phases = int(data["car_phases"])
+
     status = wallbox.update()
-    _LOGGER.info(status)
+    _LOGGER.debug(status)
 
     if not wallbox.available:
         raise CannotConnect()
@@ -45,7 +56,8 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for GEN2 Wallbox."""
 
-    VERSION = 1
+    VERSION = 2
+    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -66,7 +78,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
         )
-
 
 class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""
