@@ -17,7 +17,6 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities
 ) -> None:
@@ -78,7 +77,7 @@ class WallBoxOutCurrent(SensorEntity):
     _attr_name = "Charging current"
     _attr_unique_id = "wallbox_charging_current"
     _attr_device_class = SensorDeviceClass.CURRENT
-    _attr_device_class = SensorStateClass.MEASUREMENT
+    _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = ELECTRIC_CURRENT_AMPERE
 
     def __init__(self, device) -> None:
@@ -114,7 +113,7 @@ class WallBoxTemperature(SensorEntity):
     _attr_name = "Temperature"
     _attr_unique_id = "wallbox_temperature"
     _attr_device_class = SensorDeviceClass.TEMPERATURE
-    _attr_device_class = SensorStateClass.MEASUREMENT
+    _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = TEMP_CELSIUS
 
     def __init__(self, data) -> None:
@@ -151,7 +150,7 @@ class WallBoxDevicePower(SensorEntity):
     _attr_name = "Power"
     _attr_unique_id = "wallbox_power"
     _attr_device_class = SensorDeviceClass.POWER
-    _attr_device_class = SensorStateClass.MEASUREMENT
+    _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = POWER_KILO_WATT
 
     def __init__(self, data) -> None:
@@ -186,7 +185,7 @@ class WallBoxDeviceEnergy(SensorEntity):
     _attr_name = "Compsumption"
     _attr_unique_id = "wallbox_compsumption"
     _attr_device_class = SensorDeviceClass.ENERGY
-    _attr_device_class = SensorStateClass.MEASUREMENT
+    _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = ENERGY_KILO_WATT_HOUR
 
     def __init__(self, data) -> None:
@@ -222,7 +221,7 @@ class WallBoxDevicePowerEstimated(SensorEntity):
     _attr_name = "Power Estimated"
     _attr_unique_id = "wallbox_power_estimated"
     _attr_device_class = SensorDeviceClass.POWER
-    _attr_device_class = SensorStateClass.MEASUREMENT
+    _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = POWER_KILO_WATT
 
     def __init__(self, data) -> None:
