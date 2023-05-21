@@ -52,8 +52,23 @@ The integration has:
 - **1 confing number**: maximum charging current from 8 to 16 A
 - **1 switch** that starts/stops the charging process. It takes approximately 5-10 s to start. So be patient before the integration responds.
 
+### Advanced configuration
+You may specify some more config in your `configuration.yaml`
+
+```
+#config gen2 wallbox platform
+gen2_wallbox:
+    update_interval: 5 #default is 10sec
+```
+
+
+
 
 # Releases
+
+## 0.4.0
+- fixed stability
+- added custom `update_interval` ability for `configuration.yaml`
 
 ## 0.3.1
 - improved response and avalability of sensors

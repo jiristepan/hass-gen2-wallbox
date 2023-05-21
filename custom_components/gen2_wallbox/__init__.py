@@ -27,17 +27,8 @@ CONFIG_SCHEMA = vol.Schema(
         DOMAIN: vol.Schema(
             {
                 vol.Optional(
-                    "fve_grid_power_sensor"
-                ): cv.entity_id,
-                        vol.Optional(
-                    "fve_pv_power_sensor"
-                ): cv.entity_id,
-                        vol.Optional(
-                    "fve_battery_power_sensor"
-                ): cv.entity_id,
-                        vol.Optional(
-                    "fve_battery_soc_sensor"
-                ): cv.entity_id
+                    "update_interval"
+                ): int
             }
         ),
     },
@@ -45,7 +36,7 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 async def async_setup(hass, config) -> bool:
-    """Set up the Circadian Lighting platform."""
+    """Set up the GEN2 Wallbox platform platform."""
     if DOMAIN in config:
         conf = config[DOMAIN]
     else:
@@ -78,9 +69,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         sw_version="1.0.0",
     )
 
+    update_interval = 10
+    if "update_interval" in wallbox.config:
+        update_interval = int(wallbox.config["update_interval"])
+
     # periodical update of the state
-    async_track_time_interval(hass, wallbox.update, timedelta(seconds=10))
-    async_track_time_interval(hass, wallbox.decide, timedelta(seconds=20))
+    _LOGGER.debug(f"Starting async update task with interval {update_interval} sec")
+    async_track_time_interval(hass, wallbox.update, timedelta(seconds=update_interval))
 
     hass.data[DOMAIN][entry.entry_id] = wallbox
 

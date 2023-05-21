@@ -50,13 +50,9 @@ class GEN2_Wallbox:
     def is_available(self) -> bool:
         return self.available
 
-    def decide(self, ts=None):
-        _LOGGER.debug(f"Making decision based on {self.config}")
-        return True
-
     def update(self, ts=None):
         """update status of the device"""
-        _LOGGER.debug("Sync update start")
+        #_LOGGER.debug("Sync update start")
 
         data = self.device.status()
 
@@ -67,7 +63,7 @@ class GEN2_Wallbox:
             self.status = {"connected": True, "message": ""}
             self.available = True
 
-        _LOGGER.debug(self.available)
+        #_LOGGER.debug(self.available)
         _LOGGER.debug(data)
 
         if not self.available:
