@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_time_interval
 
-from .const import DOMAIN
+from .const import *
 from .gen2wallbox import GEN2_Wallbox
 
 import voluptuous as vol
@@ -78,6 +78,47 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async_track_time_interval(hass, wallbox.update, timedelta(seconds=update_interval))
 
     hass.data[DOMAIN][entry.entry_id] = wallbox
+
+    def increase_current(call):
+        _LOGGER.debug("call INCREASE_CURRENT")
+        entity_id = call.data.get("entity_id")
+        entity=hass.states.get(entity_id)
+        if not entity is None and entity.state != "unavailable":
+            actual = int(entity.state)
+            if actual < MAX_CURRENT:
+                wallbox.set_value("Set32A",actual+1)
+
+    def decrease_current(call):
+        _LOGGER.debug("call DECREASE")
+        entity_id = call.data.get("entity_id")
+        entity=hass.states.get(entity_id)
+        if not entity is None and entity.state != "unavailable":
+            actual = int(entity.state)
+            if actual > MIN_CURRENT:
+                wallbox.set_value("Set32A",actual-1)
+
+    def set_minimal_current(call):
+        _LOGGER.debug("call minimal current")
+        entity_id = call.data.get("entity_id")
+        entity=hass.states.get(entity_id)
+        if not entity is None and entity.state != "unavailable":
+            actual = int(entity.state)
+            if actual > MIN_CURRENT:
+                wallbox.set_value("Set32A",MIN_CURRENT)
+
+    def set_maximal_current(call):
+        _LOGGER.debug("call minimal current")
+        entity_id = call.data.get("entity_id")
+        entity=hass.states.get(entity_id)
+        if not entity is None and entity.state != "unavailable":
+            actual = int(entity.state)
+            if actual < MIN_CURRENT:
+                wallbox.set_value("Set32A",MAX_CURRENT)
+
+    hass.services.async_register(DOMAIN, "increase_current", increase_current)
+    hass.services.async_register(DOMAIN, "decrease_current", decrease_current)
+    hass.services.async_register(DOMAIN, "set_minimal_current", set_minimal_current)
+    hass.services.async_register(DOMAIN, "set_maximal_current", set_maximal_current)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 

@@ -1,0 +1,31 @@
+increase_current:
+  name: Increase Wallbox Current
+  description: Increase Wallbox Current
+  fields:
+    entity_id:
+      description: Name of the current setting entity
+      example: number.wallbox_gen_2_10_0_30_9_charging_current
+
+decrease_current:
+  name: Decrease Wallbox Current
+  description: Increase Wallbox Current
+  fields:
+    entity_id:
+      description: Name of the current setting entity
+      example: number.wallbox_gen_2_10_0_30_9_charging_current
+
+set_maximal_current:
+  name: Set Wallbox Current to MAX
+  description: Set Wallbox Current to MAX
+  fields:
+    entity_id:
+      description: Name of the current setting entity
+      example: number.wallbox_gen_2_10_0_30_9_charging_current
+
+set_minimal_current:
+  name: Set Wallbox Current to MIN
+  description: Set Wallbox Current to MIN
+  fields:
+    entity_id:
+      description: Name of the current setting entity
+      example: number.wallbox_gen_2_10_0_30_9_charging_current

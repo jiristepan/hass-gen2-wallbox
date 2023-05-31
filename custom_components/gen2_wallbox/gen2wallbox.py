@@ -12,6 +12,8 @@ class GEN2_Wallbox:
     """CLASS represoenting GEN2 WALLBOX using tinytuya local integrations."""
 
     UPDATE_INTERVAL = 5
+    MAX_CURRENT = 16
+    MIN_CURRENT = 8
 
     status = None
     available = False
