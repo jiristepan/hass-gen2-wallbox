@@ -67,6 +67,8 @@ class WallBoxState(SensorEntity):
             self._attr_available = False
         else:
             self._attr_available = True
+            if (data == "charing"):
+                data = "charging"
             self._attr_native_value = data
 
 
