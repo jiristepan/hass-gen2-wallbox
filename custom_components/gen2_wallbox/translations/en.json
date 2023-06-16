@@ -1,27 +1,25 @@
 {
-    "config": {
-      "step": {
-        "user": {
-          "title": "GEN2 config",
-          "data": {
-            "ip": "Local IP address",
-            "deviceid": "Tuya Device ID",
-            "localkey": "Tuya Device Local Key",
-            "car_phases": "Car onboard charger phases (1-3)",
-            "fve_grid_power_sensor": "FVE grid power sensor",
-            "fve_battery_power_sensor": "FVE battery power sensor",
-            "fve_battery_soc_sensor": "FVE battery soc",
-            "fve_pv_power_sensor": "FVE PV power sensor"
-          }
+  "config": {
+    "step": {
+      "user": {
+        "title": "GEN2 config",
+        "data": {
+          "name": "Wallbox name",
+          "ip": "Local IP address",
+          "deviceid": "Tuya Device ID",
+          "localkey": "Tuya Device Local Key",
+          "car_phases": "Car onboard charger phases (1-3)",
+          "test": "TEST DEVICE ONLY"
         }
-      },
-      "error": {
-        "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
-        "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
-        "unknown": "[%key:common::config_flow::error::unknown%]"
-      },
-      "abort": {
-        "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
       }
+    },
+    "error": {
+      "cannot_connect": "Can't connect to wallbox",
+      "invalid_auth": "[%key:common::config_flow::error::invalid_auth%]",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
+    "abort": {
+      "already_configured": "Already configured"
     }
   }
+}

@@ -31,12 +31,16 @@ class WallBoxChargingSwitch(SwitchEntity):
 
     _attr_has_entity_name = True
     _attr_name = "Charging switch"
-    _attr_unique_id = "wallbox_charging_switch"
+    _attr_nonunique_id = "wallbox_charging_switch"
     _attr_device_class = SwitchDeviceClass.OUTLET
 
     def __init__(self, device: GEN2_Wallbox) -> None:
         super().__init__()
         self.device = device
+
+    @property
+    def unique_id(self) -> str | None:
+        return f"{self.device.ip}-{self._attr_nonunique_id}"
 
     @property
     def device_info(self) -> DeviceInfo:

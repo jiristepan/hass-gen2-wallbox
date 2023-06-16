@@ -34,6 +34,7 @@ class GEN2_Wallbox:
     }
 
     def __init__(self, deviceid, ip, localkey) -> None:
+        self.name = "GEN2"
         self.deviceid = deviceid
         self.ip = ip
         self.localkey = localkey
@@ -54,7 +55,7 @@ class GEN2_Wallbox:
 
     def update(self, ts=None):
         """update status of the device"""
-        #_LOGGER.debug("Sync update start")
+        # _LOGGER.debug("Sync update start")
 
         data = self.device.status()
 
@@ -65,7 +66,7 @@ class GEN2_Wallbox:
             self.status = {"connected": True, "message": ""}
             self.available = True
 
-        #_LOGGER.debug(self.available)
+        # _LOGGER.debug(self.available)
         _LOGGER.debug(data)
 
         if not self.available:

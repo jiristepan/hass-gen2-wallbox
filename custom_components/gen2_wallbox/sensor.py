@@ -9,13 +9,19 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ELECTRIC_CURRENT_AMPERE, POWER_KILO_WATT, TEMP_CELSIUS, ENERGY_KILO_WATT_HOUR
+from homeassistant.const import (
+    ELECTRIC_CURRENT_AMPERE,
+    POWER_KILO_WATT,
+    TEMP_CELSIUS,
+    ENERGY_KILO_WATT_HOUR,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
+
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities
@@ -30,7 +36,7 @@ async def async_setup_entry(
         WallBoxDevicePower(gen2),
         WallBoxDeviceEnergy(gen2),
         WallBoxOutCurrent(gen2),
-        WallBoxDevicePowerEstimated(gen2)
+        WallBoxDevicePowerEstimated(gen2),
     ]
 
     async_add_entities(entities, True)
@@ -41,13 +47,17 @@ class WallBoxState(SensorEntity):
 
     _attr_has_entity_name = True
     _attr_name = "State"
-    _attr_unique_id = "wallbox_state"
+    _attr_nonunique_id = "wallbox_state"
     _attr_device_class = SensorDeviceClass.ENUM
 
     def __init__(self, device) -> None:
         super().__init__()
         self.device = device
         self._attr_available = False
+
+    @property
+    def unique_id(self) -> str | None:
+        return f"{self.device.ip}-{self._attr_nonunique_id}"
 
     @property
     def available(self) -> bool | None:
@@ -67,7 +77,7 @@ class WallBoxState(SensorEntity):
             self._attr_available = False
         else:
             self._attr_available = True
-            if (data == "charing"):
+            if data == "charing":
                 data = "charging"
             self._attr_native_value = data
 
@@ -77,7 +87,7 @@ class WallBoxOutCurrent(SensorEntity):
 
     _attr_has_entity_name = True
     _attr_name = "Charging current"
-    _attr_unique_id = "wallbox_charging_current"
+    _attr_nonunique_id = "wallbox_charging_current"
     _attr_device_class = SensorDeviceClass.CURRENT
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = ELECTRIC_CURRENT_AMPERE
@@ -86,6 +96,10 @@ class WallBoxOutCurrent(SensorEntity):
         super().__init__()
         self.device = device
         self._attr_available = False
+
+    @property
+    def unique_id(self) -> str | None:
+        return f"{self.device.ip}-{self._attr_nonunique_id}"
 
     @property
     def available(self) -> bool | None:
@@ -113,7 +127,7 @@ class WallBoxTemperature(SensorEntity):
 
     _attr_has_entity_name = True
     _attr_name = "Temperature"
-    _attr_unique_id = "wallbox_temperature"
+    _attr_nonunique_id = "wallbox_temperature"
     _attr_device_class = SensorDeviceClass.TEMPERATURE
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = TEMP_CELSIUS
@@ -122,6 +136,10 @@ class WallBoxTemperature(SensorEntity):
         super().__init__()
         self.device = data
         self._attr_available = False
+
+    @property
+    def unique_id(self) -> str | None:
+        return f"{self.device.ip}-{self._attr_nonunique_id}"
 
     @property
     def available(self) -> bool | None:
@@ -150,7 +168,7 @@ class WallBoxDevicePower(SensorEntity):
 
     _attr_has_entity_name = True
     _attr_name = "Power"
-    _attr_unique_id = "wallbox_power"
+    _attr_nonunique_id = "wallbox_power"
     _attr_device_class = SensorDeviceClass.POWER
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = POWER_KILO_WATT
@@ -159,6 +177,10 @@ class WallBoxDevicePower(SensorEntity):
         super().__init__()
         self.device = data
         self._attr_available = False
+
+    @property
+    def unique_id(self) -> str | None:
+        return f"{self.device.ip}-{self._attr_nonunique_id}"
 
     @property
     def available(self) -> bool | None:
@@ -180,12 +202,13 @@ class WallBoxDevicePower(SensorEntity):
             self._attr_available = True
             self._attr_native_value = int(data) / 10.0
 
+
 class WallBoxDeviceEnergy(SensorEntity):
     """Representation actual cumulative output in kWh."""
 
     _attr_has_entity_name = True
     _attr_name = "Compsumption"
-    _attr_unique_id = "wallbox_compsumption"
+    _attr_nonunique_id = "wallbox_compsumption"
     _attr_device_class = SensorDeviceClass.ENERGY
     _attr_state_class = SensorStateClass.TOTAL
     _attr_native_unit_of_measurement = ENERGY_KILO_WATT_HOUR
@@ -194,6 +217,10 @@ class WallBoxDeviceEnergy(SensorEntity):
         super().__init__()
         self.device = data
         self._attr_available = False
+
+    @property
+    def unique_id(self) -> str | None:
+        return f"{self.device.ip}-{self._attr_nonunique_id}"
 
     @property
     def available(self) -> bool | None:
@@ -221,7 +248,7 @@ class WallBoxDevicePowerEstimated(SensorEntity):
 
     _attr_has_entity_name = True
     _attr_name = "Power Estimated"
-    _attr_unique_id = "wallbox_power_estimated"
+    _attr_nonunique_id = "wallbox_power_estimated"
     _attr_device_class = SensorDeviceClass.POWER
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = POWER_KILO_WATT
@@ -230,6 +257,10 @@ class WallBoxDevicePowerEstimated(SensorEntity):
         super().__init__()
         self.device = data
         self._attr_available = False
+
+    @property
+    def unique_id(self) -> str | None:
+        return f"{self.device.ip}-{self._attr_nonunique_id}"
 
     @property
     def available(self) -> bool | None:

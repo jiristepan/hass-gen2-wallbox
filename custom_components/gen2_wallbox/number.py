@@ -31,7 +31,7 @@ class WallBoxChargingCurrent(NumberEntity):
 
     _attr_has_entity_name = True
     _attr_name = "Charging current"
-    _attr_unique_id = "wallbox_charging_current"
+    _attr_nonunique_id = "wallbox_charging_current"
     _attr_native_max_value = 16
     _attr_native_step = 1
     _attr_native_min_value = 8
@@ -41,6 +41,10 @@ class WallBoxChargingCurrent(NumberEntity):
     def __init__(self, device) -> None:
         super().__init__()
         self.device = device
+
+    @property
+    def unique_id(self) -> str | None:
+        return f"{self.device.ip}-{self._attr_nonunique_id}"
 
     @property
     def device_info(self) -> DeviceInfo:

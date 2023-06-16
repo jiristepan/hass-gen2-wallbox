@@ -24,16 +24,11 @@ config = {}
 
 CONFIG_SCHEMA = vol.Schema(
     {
-        DOMAIN: vol.Schema(
-            {
-                vol.Optional(
-                    "update_interval"
-                ): int
-            }
-        ),
+        DOMAIN: vol.Schema({vol.Optional("update_interval"): int}),
     },
     extra=vol.ALLOW_EXTRA,
 )
+
 
 async def async_setup(hass, config) -> bool:
     """Set up the GEN2 Wallbox platform platform."""
@@ -47,6 +42,7 @@ async def async_setup(hass, config) -> bool:
 
     return True
 
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up GEN2 Wallbox from a config entry."""
 
@@ -55,7 +51,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     wallbox = GEN2_Wallbox(
         entry.data["deviceid"], entry.data["ip"], entry.data["localkey"]
     )
-    if (entry.data["car_phases"]):
+    if entry.data["car_phases"]:
         wallbox.car_phases = int(entry.data["car_phases"])
 
     wallbox.config = hass.data[DOMAIN]["CONFIG"]
@@ -63,7 +59,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # register device info for all entities
     wallbox.device_info = DeviceInfo(
         identifiers={(DOMAIN, entry.data["ip"])},
-        name=f"Wallbox Gen 2 [{entry.data['ip']}]",
+        name=entry.data["name"],
         manufacturer="GEN2",
         model="EcoCharge GEN2",
         sw_version="1.0.0",
@@ -82,38 +78,38 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     def increase_current(call):
         _LOGGER.debug("call INCREASE_CURRENT")
         entity_id = call.data.get("entity_id")
-        entity=hass.states.get(entity_id)
+        entity = hass.states.get(entity_id)
         if not entity is None and entity.state != "unavailable":
             actual = int(entity.state)
             if actual < MAX_CURRENT:
-                wallbox.set_value("Set32A",actual+1)
+                wallbox.set_value("Set32A", actual + 1)
 
     def decrease_current(call):
         _LOGGER.debug("call DECREASE")
         entity_id = call.data.get("entity_id")
-        entity=hass.states.get(entity_id)
+        entity = hass.states.get(entity_id)
         if not entity is None and entity.state != "unavailable":
             actual = int(entity.state)
             if actual > MIN_CURRENT:
-                wallbox.set_value("Set32A",actual-1)
+                wallbox.set_value("Set32A", actual - 1)
 
     def set_minimal_current(call):
         _LOGGER.debug("call minimal current")
         entity_id = call.data.get("entity_id")
-        entity=hass.states.get(entity_id)
+        entity = hass.states.get(entity_id)
         if not entity is None and entity.state != "unavailable":
             actual = int(entity.state)
             if actual > MIN_CURRENT:
-                wallbox.set_value("Set32A",MIN_CURRENT)
+                wallbox.set_value("Set32A", MIN_CURRENT)
 
     def set_maximal_current(call):
         _LOGGER.debug("call minimal current")
         entity_id = call.data.get("entity_id")
-        entity=hass.states.get(entity_id)
+        entity = hass.states.get(entity_id)
         if not entity is None and entity.state != "unavailable":
             actual = int(entity.state)
             if actual < MIN_CURRENT:
-                wallbox.set_value("Set32A",MAX_CURRENT)
+                wallbox.set_value("Set32A", MAX_CURRENT)
 
     hass.services.async_register(DOMAIN, "increase_current", increase_current)
     hass.services.async_register(DOMAIN, "decrease_current", decrease_current)
@@ -132,12 +128,12 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     return unload_ok
 
+
 async def async_migrate_entry(hass, config_entry: ConfigEntry):
     """Migrate old entry."""
     _LOGGER.debug("Migrating from version %s", config_entry.version)
 
     if config_entry.version == 1:
-
         new = {**config_entry.data}
         # TODO: modify Config Entry data
 
@@ -151,6 +147,7 @@ async def async_migrate_entry(hass, config_entry: ConfigEntry):
 
 class GEN2_wallbox_platform:
     """wraper for global configuration"""
+
     def __init__(self, hass, config):
         self.hass = hass
         self.config = config
