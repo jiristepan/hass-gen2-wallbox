@@ -56,6 +56,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     wallbox.config = hass.data[DOMAIN]["CONFIG"]
 
+    if not ("name" in entry.data):
+        entry.data["name"] = f'GEN2 Wallbox: {entry.data["ip"]}'
+    
     # register device info for all entities
     wallbox.device_info = DeviceInfo(
         identifiers={(DOMAIN, entry.data["ip"])},
