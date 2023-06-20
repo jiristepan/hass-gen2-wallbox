@@ -56,13 +56,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     wallbox.config = hass.data[DOMAIN]["CONFIG"]
 
-    if not ("name" in entry.data):
-        entry.data["name"] = f'GEN2 Wallbox: {entry.data["ip"]}'
+    name = "GEN2 WB"
+    if ("name" in entry.data):
+        name = entry.data["name"]
+    else:
+        name = f'GEN2 Wallbox: {entry.data["ip"]}'
     
+
     # register device info for all entities
     wallbox.device_info = DeviceInfo(
         identifiers={(DOMAIN, entry.data["ip"])},
-        name=entry.data["name"],
+        name=name,
         manufacturer="GEN2",
         model="EcoCharge GEN2",
         sw_version="1.0.0",
