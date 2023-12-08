@@ -207,10 +207,10 @@ class WallBoxDeviceEnergy(SensorEntity):
     """Representation actual cumulative output in kWh."""
 
     _attr_has_entity_name = True
-    _attr_name = "Compsumption"
+    _attr_name = "Consumption"
     _attr_nonunique_id = "wallbox_compsumption"
     _attr_device_class = SensorDeviceClass.ENERGY
-    _attr_state_class = SensorStateClass.TOTAL
+    _attr_state_class = SensorStateClass.TOTAL_INCREASING
     _attr_native_unit_of_measurement = ENERGY_KILO_WATT_HOUR
 
     def __init__(self, data) -> None:
