@@ -7,8 +7,8 @@
   "documentation": "https://github.com/jiristepan/hass-gen2-wallbox",
   "homekit": {},
   "iot_class": "local_polling",
-  "requirements": ["tinytuya==1.12.6"],
+  "requirements": ["tinytuya==1.15.1", "nest_asyncio"],
   "ssdp": [],
   "zeroconf": [],
-  "version": "0.4.7"
+  "version": "0.5.0"
 }

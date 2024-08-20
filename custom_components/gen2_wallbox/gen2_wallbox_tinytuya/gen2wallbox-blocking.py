@@ -1,9 +1,9 @@
-"""Module GEN2_WALLBOX """
+"""Module GEN2_WALLBOX"""
 
 import time
 import tinytuya
 import logging
-from .async_helper import *
+import asyncio
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ class GEN2_Wallbox:
 
     def update(self, ts=None):
         """update status of the device"""
-        # _LOGGER.debug("Sync update start")
+        _LOGGER.debug("Sync update start")
 
         data = self.device.status()
 
@@ -66,7 +66,7 @@ class GEN2_Wallbox:
             self.status = {"connected": True, "message": ""}
             self.available = True
 
-        # _LOGGER.debug(self.available)
+        _LOGGER.debug(self.available)
         _LOGGER.debug(data)
 
         if not self.available:
@@ -97,12 +97,18 @@ class GEN2_Wallbox:
         state = self.get_value("DeviceState")
         if state != "charing":
             self.device.set_value(112, True)
-            time.sleep(1)
+            # time.sleep(1)
             self.device.set_value(112, False)
 
     def stop_charging(self):
         state = self.get_value("DeviceState")
         if state == "charing":
             self.device.set_value(112, True)
-            time.sleep(1)
+            # time.sleep(1)
             self.device.set_value(112, False)
+
+
+if __name__ == "__main__":
+    wb = GEN2_Wallbox("bff43c83a43130ad07vf7v", "10.0.30.9", "b1d93795cba6663e")
+    wb.update()
+    print(wb.status)

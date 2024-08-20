@@ -1,4 +1,5 @@
 """The GEN2 Wallbox integration."""
+
 from __future__ import annotations
 from datetime import timedelta
 
@@ -12,7 +13,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.event import async_track_time_interval
 
 from .const import *
-from .gen2wallbox import GEN2_Wallbox
+from .gen2_wallbox_tinytuya.gen2wallbox import GEN2_Wallbox
 
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
@@ -57,11 +58,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     wallbox.config = hass.data[DOMAIN]["CONFIG"]
 
     name = "GEN2 WB"
-    if ("name" in entry.data):
+    if "name" in entry.data:
         name = entry.data["name"]
     else:
         name = f'GEN2 Wallbox: {entry.data["ip"]}'
-    
 
     # register device info for all entities
     wallbox.device_info = DeviceInfo(

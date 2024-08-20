@@ -1,4 +1,5 @@
 """Config flow for GEN2 Wallbox integration."""
+
 from __future__ import annotations
 
 import logging
@@ -10,12 +11,10 @@ from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
-
-from .const import DOMAIN
-from .gen2wallbox import GEN2_Wallbox
-
 from homeassistant.helpers import config_validation as cv
 
+from .const import DOMAIN
+from .gen2_wallbox_tinytuya.gen2wallbox import GEN2_Wallbox
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,8 +51,8 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
         status = wallbox.update()
         _LOGGER.debug(status)
 
-        if not wallbox.available:
-            raise CannotConnect()
+        # if not wallbox.available:
+        #    raise CannotConnect()
 
     # Return info that you want to store in the config entry.
     return {"title": f'GEN2WB-f{data["ip"]}'}
@@ -71,7 +70,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         errors: dict[str, str] = {}
         if user_input is not None:
-
             await self.async_set_unique_id(user_input["deviceid"])
             self._abort_if_unique_id_configured()
 

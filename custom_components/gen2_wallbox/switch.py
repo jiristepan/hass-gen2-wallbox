@@ -1,4 +1,5 @@
 """Platform for sensor integration."""
+
 from __future__ import annotations
 
 import logging
@@ -8,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 
-from .gen2wallbox import GEN2_Wallbox
+from .gen2_wallbox_tinytuya.gen2wallbox import GEN2_Wallbox
 
 from .const import DOMAIN
 
@@ -72,5 +73,5 @@ class WallBoxChargingSwitch(SwitchEntity):
 
     def turn_off(self, **kwargs):
         """Turn the entity on."""
-        self.device.stop_charging()
+        self.device.start_charging()
         self.device.update()
