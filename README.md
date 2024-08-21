@@ -66,6 +66,10 @@ gen2_wallbox:
 
 # Releases
 
+## 0.5.0
+- rewrite to nonblocking async tasks
+- some cleaning, bug fixes
+
 ## 0.4.0
 - fixed stability
 - added custom `update_interval` ability for `configuration.yaml`
