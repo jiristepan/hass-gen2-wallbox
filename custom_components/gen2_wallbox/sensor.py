@@ -11,10 +11,6 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
-    ELECTRIC_CURRENT_AMPERE,
-    POWER_KILO_WATT,
-    TEMP_CELSIUS,
-    ENERGY_KILO_WATT_HOUR,
     UnitOfElectricCurrent,
     UnitOfEnergy,
     UnitOfPower,

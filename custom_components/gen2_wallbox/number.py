@@ -1,10 +1,11 @@
 """Platform for sensor integration."""
+
 from __future__ import annotations
 
 import logging
 
 from homeassistant.components.number import NumberEntity
-from homeassistant.const import ELECTRIC_CURRENT_AMPERE, EntityCategory
+from homeassistant.const import UnitOfElectricCurrent, EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.config_entries import ConfigEntry
@@ -35,7 +36,7 @@ class WallBoxChargingCurrent(NumberEntity):
     _attr_native_max_value = 16
     _attr_native_step = 1
     _attr_native_min_value = 8
-    _attr_native_unit_of_measurement = ELECTRIC_CURRENT_AMPERE
+    _attr_native_unit_of_measurement = UnitOfElectricCurrent.AMPERE
     _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, device) -> None:
